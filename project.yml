@@ -1,0 +1,42 @@
+name: Echo
+options:
+  bundleIdPrefix: com.echoplayer
+  deploymentTarget:
+    iOS: "15.0"
+
+settings:
+  base:
+    SWIFT_VERSION: "5.0"
+    MARKETING_VERSION: "1.0"
+    CURRENT_PROJECT_VERSION: "1"
+    TARGETED_DEVICE_FAMILY: "1"
+    GENERATE_INFOPLIST_FILE: YES
+
+targets:
+  Echo:
+    type: application
+    platform: iOS
+    sources:
+      - path: App.swift
+      - path: index.html
+        buildPhase: resources
+      - path: Assets.xcassets
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.echoplayer.app
+        PRODUCT_NAME: Echo
+        ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
+        GENERATE_INFOPLIST_FILE: YES
+    info:
+      properties:
+        CFBundleDisplayName: "Эхо"
+        LSRequiresIPhoneOS: true
+        UILaunchScreen: {}
+        UIBackgroundModes:
+          - audio
+        UISupportedInterfaceOrientations:
+          - UIInterfaceOrientationPortrait
+        ITSAppUsesNonExemptEncryption: false
+        NSPhotoLibraryUsageDescription: "Чтобы выбирать звуки, гифки и обложки из галереи"
+        NSCameraUsageDescription: "Нужна, если выбрать фото или видео прямо с камеры"
+        NSMicrophoneUsageDescription: "Нужен, если снять видео прямо с камеры"
