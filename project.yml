@@ -17,10 +17,10 @@ targets:
     type: application
     platform: iOS
     sources:
-      - App.swift
+      - path: App.swift
       - path: index.html
         buildPhase: resources
-      - Assets.xcassets
+      - path: Assets.xcassets
     settings:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: com.echoplayer.app
