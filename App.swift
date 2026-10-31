@@ -116,8 +116,9 @@ final class ViewController: UIViewController, WKNavigationDelegate, WKUIDelegate
             return
         }
 
-        if let scheme = url.scheme?.lowercased(),
-           scheme == "http" || scheme == "https" {
+        let scheme = url.scheme?.lowercased() ?? ""
+
+        if scheme == "http" || scheme == "https" {
             UIApplication.shared.open(url)
             decisionHandler(.cancel)
         } else if scheme == "echo" {
