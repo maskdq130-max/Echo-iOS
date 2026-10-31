@@ -82,6 +82,8 @@ final class ViewController: UIViewController, WKNavigationDelegate, WKUIDelegate
         let configuration = WKWebViewConfiguration()
         configuration.websiteDataStore = .default()
         configuration.allowsInlineMediaPlayback = true
+        // Музыка не должна превращаться в видео с картинкой в картинке.
+        configuration.allowsPictureInPictureMediaPlayback = false
         configuration.mediaTypesRequiringUserActionForPlayback = []
         configuration.setURLSchemeHandler(schemeHandler, forURLScheme: "echo")
 
@@ -121,7 +123,7 @@ final class ViewController: UIViewController, WKNavigationDelegate, WKUIDelegate
         if scheme == "http" || scheme == "https" {
             UIApplication.shared.open(url)
             decisionHandler(.cancel)
-        } else if scheme == "echo" {
+        } else if scheme == "echo" || scheme == "blob" || scheme == "about" || scheme == "data" {
             decisionHandler(.allow)
         } else {
             decisionHandler(.cancel)
@@ -162,6 +164,27 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
             try audioSession.setActive(true)
         } catch {
             NSLog("Не удалось активировать аудиосессию: %@", error.localizedDescription)
+        }
+
+        // После звонка, Siri или будильника возвращаем аудиосессию, чтобы музыку можно было продолжить.
+        NotificationCenter.default.addObserver(
+            forName: AVAudioSession.interruptionNotification,
+            object: nil,
+            queue: .main
+        ) { note in
+            guard let raw = note.userInfo?[AVAudioSessionInterruptionTypeKey] as? UInt,
+                  let type = AVAudioSession.InterruptionType(rawValue: raw),
+                  type == .ended else { return }
+            try? AVAudioSession.sharedInstance().setActive(true)
+        }
+
+        // Уходя в фон (экран гаснет, блокировка), подтверждаем, что сессия активна.
+        NotificationCenter.default.addObserver(
+            forName: UIApplication.didEnterBackgroundNotification,
+            object: nil,
+            queue: .main
+        ) { _ in
+            try? AVAudioSession.sharedInstance().setActive(true)
         }
 
         let appWindow = UIWindow(frame: UIScreen.main.bounds)
